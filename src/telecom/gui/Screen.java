@@ -203,6 +203,7 @@ public class Screen extends JFrame implements CustomerListener
 		conferenceBtn.setEnabled(false);
 		callDetailBtn.setEnabled(false);
 		callBtn.setEnabled(false);
+		callStateBtn.setEnabled(false);
 		
 		addBtn.addActionListener(new ActionListener()
 		{
