@@ -3,6 +3,7 @@ package telecom.gui;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.regex.Pattern;
 
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -23,6 +24,7 @@ import telecom.controller.TelecomController;
 public class NewCustomer extends JFrame implements ActionListener
 {
 	private static final long serialVersionUID = 1L;
+	private static final String PHONE_NO_DDD = "((([0-9]{4,5})(\\-)?([0-9]{4}))|([0-9]{8,9}))";
 	
 	@SuppressWarnings("synthetic-access")
 	private final DocumentListener txtListener = new DocumentListener()
@@ -88,7 +90,8 @@ public class NewCustomer extends JFrame implements ActionListener
 	@Override
 	public void actionPerformed(ActionEvent e)
 	{
-		if (!isValid(nameTxt) || !isValid(dddTxt) || !isValid(phoneTxt))
+		// TODO if fail, show msg
+		if (!isValid(nameTxt) || !isValid(dddTxt) || !isValid(phoneTxt) || !isPhone(phoneTxt))
 		{
 			return;
 		}
@@ -103,7 +106,6 @@ public class NewCustomer extends JFrame implements ActionListener
 			return;
 		}
 		
-		// TODO if fail, show msg
 		TelecomController.getInstance().addCustomer(nameTxt.getText(), ddd, phoneTxt.getText());
 		dispose();
 	}
@@ -111,5 +113,10 @@ public class NewCustomer extends JFrame implements ActionListener
 	private boolean isValid(JTextField txt)
 	{
 		return !txt.getText().isEmpty();
+	}
+	
+	private boolean isPhone(JTextField txt)
+	{
+		return Pattern.compile(PHONE_NO_DDD).matcher(txt.getText().trim()).matches();
 	}
 }
