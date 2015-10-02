@@ -45,22 +45,21 @@ public class Screen extends JFrame implements CustomerListener
 		"Telefone"
 	};
 	
-	private final JButton addBtn = new JButton("Adicionar");
-	// private final JButton removeBtn = new JButton("Excluir");
-	private final JButton callBtn = new JButton("Ligar");
-	private final JButton callDetailBtn = new JButton("Detalhes");
-	private final JButton customerDetailBtn = new JButton("Detalhes");
-	private final JButton callStateBtn = new JButton("Atender");
-	private final JList<String> callFromList = new JList<>();
-	private final JList<String> callsList = new JList<>();
-	private final JList<String> callToList = new JList<>();
+	protected final JButton addBtn = new JButton("Adicionar");
+	protected final JButton callBtn = new JButton("Ligar");
+	protected final JButton callDetailBtn = new JButton("Detalhes");
+	protected final JButton customerDetailBtn = new JButton("Detalhes");
+	protected final JButton callStateBtn = new JButton("Atender");
+	protected final JList<String> callFromList = new JList<>();
+	protected final JList<String> callsList = new JList<>();
+	protected final JList<String> callToList = new JList<>();
 	private final JScrollPane callFromPane = new JScrollPane();
 	private final JScrollPane callToPane = new JScrollPane();
 	private final JScrollPane callsPane = new JScrollPane();
 	private final JScrollPane customerPane = new JScrollPane();
 	private final JLabel callLabel = new JLabel("Ligação");
 	private final JLabel callsLabel = new JLabel("Ligações");
-	private final JButton conferenceBtn = new JButton("Conferência");
+	protected final JButton conferenceBtn = new JButton("Conferência");
 	private final JLabel customerLabel = new JLabel("Clientes");
 	private final JLabel toLabel = new JLabel("->");
 	private final JPanel callPanel = new JPanel();
@@ -68,7 +67,7 @@ public class Screen extends JFrame implements CustomerListener
 	private final JPanel callsBtnPanel = new JPanel();
 	private final JPanel customerBtnPanel = new JPanel();
 	private final JPanel mainPanel = new JPanel();
-	private final JTable customerTable = new JTable();
+	protected final JTable customerTable = new JTable();
 	private final JSeparator horSeparator = new JSeparator();
 	private final JSeparator verSeparator = new JSeparator();
 	
@@ -280,7 +279,6 @@ public class Screen extends JFrame implements CustomerListener
 			public void actionPerformed(ActionEvent e)
 			{
 				// TODO Auto-generated method stub
-				
 			}
 		});
 		
@@ -292,7 +290,6 @@ public class Screen extends JFrame implements CustomerListener
 				int[] indeces = callsList.getSelectedIndices();
 				if (indeces.length != 2)
 				{
-					// TODO block > 2 selects
 					return;
 				}
 				
@@ -371,7 +368,7 @@ public class Screen extends JFrame implements CustomerListener
 		return (A) (customerTable.getModel().getValueAt(row, column));
 	}
 	
-	private void toggleCallBtn()
+	protected void toggleCallBtn()
 	{
 		int from = callFromList.getSelectedIndex();
 		int to = callToList.getSelectedIndex();
