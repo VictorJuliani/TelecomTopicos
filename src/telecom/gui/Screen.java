@@ -1,6 +1,5 @@
 package telecom.gui;
 
-import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -47,7 +46,7 @@ public class Screen extends JFrame implements CustomerListener
 	};
 	
 	private final JButton addBtn = new JButton("Adicionar");
-	private final JButton removeBtn = new JButton("Excluir");
+	// private final JButton removeBtn = new JButton("Excluir");
 	private final JButton callBtn = new JButton("Ligar");
 	private final JButton callDetailBtn = new JButton("Detalhes");
 	private final JButton customerDetailBtn = new JButton("Detalhes");
@@ -126,7 +125,7 @@ public class Screen extends JFrame implements CustomerListener
 				}
 				
 				int row = customerTable.getSelectedRow();
-				removeBtn.setEnabled(row >= 0);
+				// removeBtn.setEnabled(row >= 0);
 				customerDetailBtn.setEnabled(row >= 0);
 			}
 		});
@@ -137,15 +136,9 @@ public class Screen extends JFrame implements CustomerListener
 		
 		GroupLayout customerBtnPanelLayout = new GroupLayout(customerBtnPanel);
 		customerBtnPanel.setLayout(customerBtnPanelLayout);
-		customerBtnPanelLayout.setHorizontalGroup(customerBtnPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addGroup(GroupLayout.Alignment.TRAILING, customerBtnPanelLayout.createSequentialGroup().addComponent(customerDetailBtn).addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE).addComponent(removeBtn).addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(addBtn, GroupLayout.PREFERRED_SIZE, 85, GroupLayout.PREFERRED_SIZE)));
+		customerBtnPanelLayout.setHorizontalGroup(customerBtnPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addGroup(GroupLayout.Alignment.TRAILING, customerBtnPanelLayout.createSequentialGroup().addComponent(customerDetailBtn).addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE).addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(addBtn, GroupLayout.PREFERRED_SIZE, 85, GroupLayout.PREFERRED_SIZE)));
 		
-		customerBtnPanelLayout.linkSize(SwingConstants.HORIZONTAL, new Component[]
-		{
-			addBtn,
-			removeBtn
-		});
-		
-		customerBtnPanelLayout.setVerticalGroup(customerBtnPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addGroup(customerBtnPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(addBtn).addComponent(removeBtn).addComponent(customerDetailBtn)));
+		customerBtnPanelLayout.setVerticalGroup(customerBtnPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addGroup(customerBtnPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(addBtn).addComponent(customerDetailBtn)));
 		
 		callPanel.setPreferredSize(new Dimension(400, 380));
 		
@@ -206,7 +199,6 @@ public class Screen extends JFrame implements CustomerListener
 			}
 		});
 		
-		removeBtn.setEnabled(false);
 		customerDetailBtn.setEnabled(false);
 		conferenceBtn.setEnabled(false);
 		callDetailBtn.setEnabled(false);
@@ -218,21 +210,6 @@ public class Screen extends JFrame implements CustomerListener
 			public void actionPerformed(ActionEvent e)
 			{
 				new NewCustomer(Screen.this).setVisible(true);
-			}
-		});
-		
-		removeBtn.addActionListener(new ActionListener()
-		{
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				int row = customerTable.getSelectedRow();
-				if (row < 0)
-				{
-					return;
-				}
-				
-				TelecomController.getInstance().removeCustomer(getCellValue(row, 0, String.class), row);
 			}
 		});
 		
@@ -386,15 +363,6 @@ public class Screen extends JFrame implements CustomerListener
 		
 		((DefaultListModel<String>) callFromList.getModel()).addElement(customer.getName());
 		((DefaultListModel<String>) callToList.getModel()).addElement(customer.getName());
-	}
-	
-	@Override
-	public void removeCustomer(int row)
-	{
-		String name = getCellValue(row, 0, String.class);
-		((DefaultTableModel) customerTable.getModel()).removeRow(row);
-		((DefaultListModel<String>) callFromList.getModel()).removeElement(name);
-		((DefaultListModel<String>) callToList.getModel()).removeElement(name);
 	}
 	
 	@SuppressWarnings("unchecked")

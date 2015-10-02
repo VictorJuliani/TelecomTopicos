@@ -81,18 +81,6 @@ public class TelecomController
 		return true;
 	}
 	
-	public void removeCustomer(String name, int row)
-	{
-		Customer c = customers.remove(name);
-		if (c != null)
-		{
-			for (CustomerListener cc : customerObservers)
-			{
-				cc.removeCustomer(row);
-			}
-		}
-	}
-	
 	public static TelecomController getInstance()
 	{
 		return SingletonHolder._instance;
