@@ -13,7 +13,9 @@ public class TelecomController
 {
 	private final Map<String, Customer> customers = new HashMap<>();
 	private final List<CustomerListener> customerObservers = new ArrayList<>();
-	private final List<Call> calls = new ArrayList<>();
+	private final List<Call> activeCalls = new ArrayList<>();
+	
+	private final List<Call> allCalls = new ArrayList<>();
 	
 	public void addCustomerObserver(CustomerListener listener)
 	{
@@ -22,7 +24,7 @@ public class TelecomController
 	
 	public Call getCall(int index)
 	{
-		return calls.get(index);
+		return activeCalls.get(index);
 	}
 	
 	public Call doCall(String from, String to)
@@ -36,7 +38,8 @@ public class TelecomController
 		}
 		
 		Call c = new Call(f, t, f.getPhoneNumber().charAt(0) > '5');
-		calls.add(c);
+		activeCalls.add(c);
+		allCalls.add(c);
 		
 		return c;
 	}
@@ -44,13 +47,13 @@ public class TelecomController
 	public void endCall(Call call)
 	{
 		call.hangup();
-		calls.remove(call);
+		activeCalls.remove(call);
 	}
 	
 	public boolean mergeCall(int c1, int c2)
 	{
-		Call call1 = calls.get(c1);
-		Call call2 = calls.get(c2);
+		Call call1 = activeCalls.get(c1);
+		Call call2 = activeCalls.get(c2);
 		
 		if (call1 == call2) // both null or merging the same
 		{
@@ -58,7 +61,7 @@ public class TelecomController
 		}
 		
 		call1.merge(call2);
-		calls.remove(call2);
+		activeCalls.remove(call2);
 		
 		return true;
 	}
