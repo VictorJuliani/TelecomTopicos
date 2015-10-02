@@ -112,14 +112,21 @@ public class Screen extends JFrame implements CustomerListener
 			}
 		});
 		
+		customerTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		
 		customerTable.getSelectionModel().addListSelectionListener(new ListSelectionListener()
 		{
 			@Override
 			public void valueChanged(ListSelectionEvent e)
 			{
-				System.out.println(customerTable.getSelectedRow());
-				removeBtn.setEnabled(true);
-				customerDetailBtn.setEnabled(true);
+				if (e.getValueIsAdjusting())
+				{
+					return;
+				}
+				
+				int row = customerTable.getSelectedRow();
+				removeBtn.setEnabled(row >= 0);
+				customerDetailBtn.setEnabled(row >= 0);
 			}
 		});
 		
@@ -156,7 +163,7 @@ public class Screen extends JFrame implements CustomerListener
 			@Override
 			public void valueChanged(ListSelectionEvent e)
 			{
-				callBtn.setEnabled(callToList.getSelectedIndex() >= 0);
+				toggleCallBtn();
 			}
 		});
 		
@@ -165,7 +172,7 @@ public class Screen extends JFrame implements CustomerListener
 			@Override
 			public void valueChanged(ListSelectionEvent e)
 			{
-				callBtn.setEnabled(callFromList.getSelectedIndex() >= 0);
+				toggleCallBtn();
 			}
 		});
 		
@@ -175,15 +182,26 @@ public class Screen extends JFrame implements CustomerListener
 			public void valueChanged(ListSelectionEvent e)
 			{
 				int row = callsList.getSelectedIndex();
+				callDetailBtn.setEnabled(row >= 0);
 				if (row < 0)
 				{
+					callStateBtn.setEnabled(false);
+					callDetailBtn.setEnabled(false);
+					conferenceBtn.setEnabled(false);
 					return;
 				}
 				
-				conferenceBtn.setEnabled(Math.abs(e.getLastIndex() - e.getFirstIndex()) == 2);
-				
-				callDetailBtn.setEnabled(true);
-				callStateBtn.setText(TelecomController.getInstance().getCall(row).isConnected() ? "Desligar" : "Atender");
+				if (callsList.getSelectedIndices().length == 2)
+				{
+					conferenceBtn.setEnabled(true);
+					callStateBtn.setEnabled(false);
+				}
+				else
+				{
+					conferenceBtn.setEnabled(false);
+					callStateBtn.setEnabled(true);
+					callStateBtn.setText(TelecomController.getInstance().getCall(row).isConnected() ? "Desligar" : "Atender");
+				}
 			}
 		});
 		
@@ -272,6 +290,7 @@ public class Screen extends JFrame implements CustomerListener
 				else
 				{
 					call.pickup();
+					callStateBtn.setText("Desligar");
 				}
 			}
 		});
@@ -370,7 +389,7 @@ public class Screen extends JFrame implements CustomerListener
 	@Override
 	public void removeCustomer(int row)
 	{
-		String name = (String) customerTable.getValueAt(row, 0);
+		String name = getCellValue(row, 0, String.class);
 		((DefaultTableModel) customerTable.getModel()).removeRow(row);
 		((DefaultListModel<String>) callFromList.getModel()).removeElement(name);
 		((DefaultListModel<String>) callToList.getModel()).removeElement(name);
@@ -380,5 +399,23 @@ public class Screen extends JFrame implements CustomerListener
 	public <A> A getCellValue(int row, int column, Class<A> clazz)
 	{
 		return (A) (customerTable.getModel().getValueAt(row, column));
+	}
+	
+	private void toggleCallBtn()
+	{
+		int from = callFromList.getSelectedIndex();
+		int to = callToList.getSelectedIndex();
+		
+		if ((from < 0) || (to < 0)) // not both selected
+		{
+			callBtn.setEnabled(false);
+			return;
+		}
+		
+		String f = callFromList.getModel().getElementAt(from);
+		String t = callToList.getModel().getElementAt(to);
+		
+		// disable if selecting the same from & to
+		callBtn.setEnabled(!f.equals(t));
 	}
 }
