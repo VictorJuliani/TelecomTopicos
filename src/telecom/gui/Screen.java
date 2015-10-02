@@ -30,6 +30,7 @@ import telecom.Call;
 import telecom.Customer;
 import telecom.controller.TelecomController;
 import telecom.util.CustomerListener;
+import telecom.util.TListSelectionModel;
 
 /**
  * @author Victor
@@ -339,6 +340,7 @@ public class Screen extends JFrame implements CustomerListener
 		callFromList.setModel(new DefaultListModel<String>());
 		callToList.setModel(new DefaultListModel<String>());
 		callsList.setModel(new DefaultListModel<String>());
+		callsList.setSelectionModel(new TListSelectionModel(callsList, 2));
 		
 		GroupLayout callPanelLayout = new GroupLayout(callPanel);
 		callPanel.setLayout(callPanelLayout);
