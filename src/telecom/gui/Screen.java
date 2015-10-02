@@ -170,6 +170,7 @@ public class Screen extends JFrame implements CustomerListener
 			}
 		});
 		
+		callsList.setSelectionModel(new TListSelectionModel(callsList, 2));
 		callsList.getSelectionModel().addListSelectionListener(new ListSelectionListener()
 		{
 			@Override
@@ -302,7 +303,7 @@ public class Screen extends JFrame implements CustomerListener
 				Vector<Customer> v = c.getConnections();
 				for (int i = 0; i < v.size(); i++)
 				{
-					names += v.get(i);
+					names += v.get(i).getName();
 					if (i < (v.size() - 1))
 					{
 						names += ", ";
@@ -317,7 +318,6 @@ public class Screen extends JFrame implements CustomerListener
 		callFromList.setModel(new DefaultListModel<String>());
 		callToList.setModel(new DefaultListModel<String>());
 		callsList.setModel(new DefaultListModel<String>());
-		callsList.setSelectionModel(new TListSelectionModel(callsList, 2));
 		
 		GroupLayout callPanelLayout = new GroupLayout(callPanel);
 		callPanel.setLayout(callPanelLayout);
