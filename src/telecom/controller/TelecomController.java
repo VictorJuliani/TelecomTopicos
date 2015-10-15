@@ -84,6 +84,24 @@ public class TelecomController
 		return true;
 	}
 	
+	public long reportCustomerTime(String nome)
+	{
+		Customer c = customers.get(nome);
+		Timing t = Timing.aspectOf();
+		long tempo = t.getTotalConnectTime(c);
+		
+		return tempo;
+	}
+	
+	public long reportCustomerBilling(String nome)
+	{
+		Customer c = customers.get(nome);
+		Billing b = Billing.aspectOf();
+		
+		long preco = b.getTotalCharge(c);
+		return preco;
+	}
+	
 	public static TelecomController getInstance()
 	{
 		return SingletonHolder._instance;
