@@ -1,5 +1,6 @@
 package telecom.gui;
 
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -57,9 +58,9 @@ public class Screen extends JFrame implements CustomerListener
 	private final JScrollPane callToPane = new JScrollPane();
 	private final JScrollPane callsPane = new JScrollPane();
 	private final JScrollPane customerPane = new JScrollPane();
-	private final JLabel callLabel = new JLabel("Ligação");
-	private final JLabel callsLabel = new JLabel("Ligações");
-	protected final JButton conferenceBtn = new JButton("Conferência");
+	private final JLabel callLabel = new JLabel("LigaÃ§Ã£o");
+	private final JLabel callsLabel = new JLabel("LigaÃ§Ãµes");
+	protected final JButton conferenceBtn = new JButton("ConferÃªncia");
 	private final JLabel customerLabel = new JLabel("Clientes");
 	private final JLabel toLabel = new JLabel("->");
 	private final JPanel callPanel = new JPanel();
@@ -219,7 +220,19 @@ public class Screen extends JFrame implements CustomerListener
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				// TODO Auto-generated method stub
+				int row = customerTable.getSelectedRow();
+				
+				if (row < 0)
+				{
+					System.out.println("Indice menor que 0: " + row);
+					return;
+				}
+				String name = (String) customerTable.getValueAt(row, 0);
+				float tempo = TelecomController.getInstance().reportCustomerTime(name);
+				// float preco = TelecomController.getInstance().reportCustomerBilling(name);
+				System.out.println("Tempo " + tempo + " Preco"/* + preco */);
+				new InformacoesLigacao(Screen.this, tempo /* ,preco */).setVisible(true);
+				
 			}
 		});
 		
