@@ -5,10 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import telecom.Billing;
 import telecom.Call;
 import telecom.Customer;
-import telecom.Timing;
+import telecom.util.CallHolder;
 import telecom.util.CustomerListener;
 
 public class TelecomController
@@ -17,7 +16,7 @@ public class TelecomController
 	private final List<CustomerListener> customerObservers = new ArrayList<>();
 	private final List<Call> activeCalls = new ArrayList<>();
 	
-	private final List<Call> allCalls = new ArrayList<>();
+	private final List<CallHolder> allCalls = new ArrayList<>();
 	
 	public void addCustomerObserver(CustomerListener listener)
 	{
@@ -41,7 +40,6 @@ public class TelecomController
 		
 		Call c = new Call(f, t, f.getPhoneNumber().charAt(0) > '5');
 		activeCalls.add(c);
-		allCalls.add(c);
 		
 		return c;
 	}
@@ -50,6 +48,7 @@ public class TelecomController
 	{
 		call.hangup();
 		activeCalls.remove(call);
+		allCalls.add(new CallHolder(call));
 	}
 	
 	public boolean mergeCall(int c1, int c2)
@@ -87,30 +86,17 @@ public class TelecomController
 		return true;
 	}
 	
-	public long reportCustomerTime(String nome)
+	public Customer getCustomer(String name)
 	{
-		Customer c = customers.get(nome);
-		Timing t = Timing.aspectOf();
-		long tempo = t.getTotalConnectTime(c);
-		
-		return tempo;
+		return customers.get(name);
 	}
 	
-	public long reportCustomerBilling(String nome)
+	public List<CallHolder> getCalls(Customer customer)
 	{
-		Customer c = customers.get(nome);
-		Billing b = Billing.aspectOf();
-		
-		long preco = b.getTotalCharge(c);
-		return preco;
-	}
-	
-	public List<Call> getCalls(Customer customer)
-	{
-		List<Call> result = new ArrayList<>();
-		for (Call c : allCalls)
+		List<CallHolder> result = new ArrayList<>();
+		for (CallHolder c : allCalls)
 		{
-			if (c.includes(customer))
+			if (c.getInfo(customer) != null)
 			{
 				result.add(c);
 			}

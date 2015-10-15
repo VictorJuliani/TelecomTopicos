@@ -1,7 +1,7 @@
 package telecom.gui;
 
 import java.awt.Font;
-import java.util.ArrayList;
+import java.text.DecimalFormat;
 import java.util.List;
 
 import javax.swing.DefaultListModel;
@@ -20,17 +20,18 @@ import javax.swing.WindowConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import telecom.Call;
 import telecom.Customer;
-import telecom.util.ListDetailListener;
+import telecom.controller.TelecomController;
+import telecom.util.CallHolder;
+import telecom.util.CustomerHolder;
 
 /**
  * @author Victor
- * @param <T>
  */
-public class Info<T> extends JFrame
+public class Info extends JFrame
 {
 	private static final long serialVersionUID = 1L;
+	public final static DecimalFormat FORMATTER = new DecimalFormat("#.##");
 	
 	private final JLabel lblCost = new JLabel("Custo:");
 	private final JLabel lblDetail = new JLabel("Detalhes:");
@@ -44,41 +45,23 @@ public class Info<T> extends JFrame
 	protected final JTextField txtCost = new JTextField();
 	protected final JTextField txtDuration = new JTextField();
 	
-	protected final ListDetailListener<T> _listener;
+	protected List<CallHolder> items;
+	protected Customer _customer;
 	
-	protected List<T> items;
-	
-	public Info(JFrame parent, ListDetailListener<T> listener, List<T> customerCalls)
+	public Info(JFrame parent, Customer customer)
 	{
-		this(parent, "Ligações do Cliente", listener);
-		for (T c : customerCalls)
+		setTitle("Ligações do Cliente");
+		setLocationRelativeTo(parent);
+		
+		initComponents();
+		
+		items = TelecomController.getInstance().getCalls(customer);
+		_customer = customer;
+		
+		for (CallHolder c : items)
 		{
 			getModel().addElement(c.toString());
 		}
-		
-		items = customerCalls;
-	}
-	
-	@SuppressWarnings("unchecked")
-	public Info(JFrame parent, ListDetailListener<T> listener, Call call)
-	{
-		this(parent, "Detalhes da Ligação", listener);
-		
-		items = new ArrayList<>();
-		for (Customer c : call.getParticipants())
-		{
-			items.add((T) c);
-			getModel().addElement(c.getName());
-		}
-	}
-	
-	private Info(JFrame parent, String title, ListDetailListener<T> listener)
-	{
-		_listener = listener;
-		
-		setTitle(title);
-		setLocationRelativeTo(parent);
-		initComponents();
 	}
 	
 	private void initComponents()
@@ -102,7 +85,10 @@ public class Info<T> extends JFrame
 					return;
 				}
 				
-				_listener.onItemSelected(items.get(index), txtDuration, txtCost);
+				CustomerHolder holder = items.get(index).getInfo(_customer);
+				
+				// TODO txtCost.setText(String.valueOf(holder.getCost()));
+				txtDuration.setText(FORMATTER.format(holder.getDuration()));
 			}
 		});
 		

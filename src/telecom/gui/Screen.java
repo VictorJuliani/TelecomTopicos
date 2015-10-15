@@ -5,7 +5,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.DefaultListModel;
 import javax.swing.GroupLayout;
@@ -17,7 +18,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.LayoutStyle;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
@@ -30,7 +30,6 @@ import telecom.Call;
 import telecom.Customer;
 import telecom.controller.TelecomController;
 import telecom.util.CustomerListener;
-import telecom.util.ListDetailListener;
 import telecom.util.TListSelectionModel;
 
 /**
@@ -49,7 +48,6 @@ public class Screen extends JFrame implements CustomerListener
 	
 	protected final JButton addBtn = new JButton("Adicionar");
 	protected final JButton callBtn = new JButton("Ligar");
-	protected final JButton callDetailBtn = new JButton("Detalhes");
 	protected final JButton customerDetailBtn = new JButton("Detalhes");
 	protected final JButton callStateBtn = new JButton("Atender");
 	protected final JList<String> callFromList = new JList<>();
@@ -73,24 +71,17 @@ public class Screen extends JFrame implements CustomerListener
 	private final JSeparator horSeparator = new JSeparator();
 	private final JSeparator verSeparator = new JSeparator();
 	
-	protected final ListDetailListener<Customer> callListener = new ListDetailListener<Customer>()
-	{
-		@Override
-		public void onItemSelected(Customer item, JTextField duration, JTextField cost)
-		{
-			duration.setText(String.valueOf(TelecomController.getInstance().reportCustomerTime(item.getName())));
-			// cost.setText(String.valueOf(TelecomController.getInstance().reportCustomerBilling(item.getName())));
-		}
-	};
-	
-	protected final ListDetailListener<Call> customerListener = new ListDetailListener<Call>()
-	{
-		@Override
-		public void onItemSelected(Call item, JTextField duration, JTextField cost)
-		{
-			
-		}
-	};
+	/*
+	 * protected final ListDetailListener<Customer> callListener = new ListDetailListener<Customer>()
+	 * {
+	 * @Override
+	 * public void onItemSelected(Customer item, JTextField duration, JTextField cost)
+	 * {
+	 * duration.setText(String.valueOf(TelecomController.getInstance().reportCustomerTime(item.getName())));
+	 * // cost.setText(String.valueOf(TelecomController.getInstance().reportCustomerBilling(item.getName())));
+	 * }
+	 * };
+	 */
 	
 	/**
 	 * Creates new form Screen
@@ -197,11 +188,9 @@ public class Screen extends JFrame implements CustomerListener
 			public void valueChanged(ListSelectionEvent e)
 			{
 				int row = callsList.getSelectedIndex();
-				callDetailBtn.setEnabled(row >= 0);
 				if (row < 0)
 				{
 					callStateBtn.setEnabled(false);
-					callDetailBtn.setEnabled(false);
 					conferenceBtn.setEnabled(false);
 					return;
 				}
@@ -222,7 +211,6 @@ public class Screen extends JFrame implements CustomerListener
 		
 		customerDetailBtn.setEnabled(false);
 		conferenceBtn.setEnabled(false);
-		callDetailBtn.setEnabled(false);
 		callBtn.setEnabled(false);
 		callStateBtn.setEnabled(false);
 		
@@ -244,14 +232,10 @@ public class Screen extends JFrame implements CustomerListener
 				
 				if (row < 0)
 				{
-					System.out.println("Indice menor que 0: " + row);
 					return;
 				}
-				String name = (String) customerTable.getValueAt(row, 0);
-				float tempo = TelecomController.getInstance().reportCustomerTime(name);
-				// float preco = TelecomController.getInstance().reportCustomerBilling(name);
-				System.out.println("Tempo " + tempo + " Preco"/* + preco */);
-				new InformacoesLigacao(Screen.this, tempo /* ,preco */).setVisible(true);
+				
+				new Info(Screen.this, TelecomController.getInstance().getCustomer(getCellValue(row, 0, String.class))).setVisible(true);
 			}
 		});
 		
@@ -306,21 +290,6 @@ public class Screen extends JFrame implements CustomerListener
 			}
 		});
 		
-		callDetailBtn.addActionListener(new ActionListener()
-		{
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				int row = callsList.getSelectedIndex();
-				if (row < 0)
-				{
-					return;
-				}
-				
-				new Info<>(Screen.this, callListener, TelecomController.getInstance().getCall(row)).setVisible(true);
-			}
-		});
-		
 		conferenceBtn.addActionListener(new ActionListener()
 		{
 			@Override
@@ -336,7 +305,7 @@ public class Screen extends JFrame implements CustomerListener
 				TelecomController.getInstance().mergeCall(indeces[0], indeces[1]);
 				
 				String names = "";
-				Vector<Customer> v = c.getConnections();
+				List<Customer> v = new ArrayList<>(c.getParticipants());
 				for (int i = 0; i < v.size(); i++)
 				{
 					names += v.get(i).getName();
@@ -366,8 +335,8 @@ public class Screen extends JFrame implements CustomerListener
 		
 		GroupLayout callsBtnPanelLayout = new GroupLayout(callsBtnPanel);
 		callsBtnPanel.setLayout(callsBtnPanelLayout);
-		callsBtnPanelLayout.setHorizontalGroup(callsBtnPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addGroup(GroupLayout.Alignment.TRAILING, callsBtnPanelLayout.createSequentialGroup().addComponent(conferenceBtn).addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE).addComponent(callDetailBtn).addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(callStateBtn)));
-		callsBtnPanelLayout.setVerticalGroup(callsBtnPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addGroup(callsBtnPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(callStateBtn).addComponent(callDetailBtn).addComponent(conferenceBtn)));
+		callsBtnPanelLayout.setHorizontalGroup(callsBtnPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addGroup(GroupLayout.Alignment.TRAILING, callsBtnPanelLayout.createSequentialGroup().addComponent(conferenceBtn).addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE).addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(callStateBtn)));
+		callsBtnPanelLayout.setVerticalGroup(callsBtnPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addGroup(callsBtnPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(callStateBtn).addComponent(conferenceBtn)));
 		
 		GroupLayout callsPanelLayout = new GroupLayout(callsPanel);
 		callsPanel.setLayout(callsPanelLayout);

@@ -17,17 +17,17 @@ about the software, its performance or its conformity to any specification.
  */
 package telecom;
 
-import java.util.Enumeration;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
-import java.util.Vector;
 
 /**
  * A call supports the process of a customer trying to connect to others.
  */
 public class Call
 {
-	private final Vector connections = new Vector();
+	private final List<Connection> connections = new ArrayList<>();
 	
 	public Call(Customer caller, Customer receiver, boolean iM)
 	{
@@ -40,49 +40,48 @@ public class Call
 		{
 			c = new LongDistance(caller, receiver, iM);
 		}
-		connections.addElement(c);
+		connections.add(c);
 	}
 	
 	public void pickup()
 	{
-		Connection connection = (Connection) connections.lastElement();
+		Connection connection = connections.get(connections.size() - 1);
 		connection.complete();
 	}
 	
 	public boolean isConnected()
 	{
-		return ((Connection) connections.lastElement()).getState() == Connection.COMPLETE;
+		return (connections.get(connections.size() - 1)).getState() == Connection.COMPLETE;
 	}
 	
 	public void hangup()
 	{
-		for (Enumeration e = connections.elements(); e.hasMoreElements();)
+		for (Connection c : connections)
 		{
-			((Connection) e.nextElement()).drop();
+			c.drop();
 		}
 	}
 	
 	public boolean includes(Customer c)
 	{
-		boolean result = false;
-		for (Enumeration e = connections.elements(); e.hasMoreElements();)
+		for (Connection con : connections)
 		{
-			result = result || ((Connection) e.nextElement()).connects(c);
+			if (con.connects(c))
+			{
+				return true;
+			}
 		}
-		return result;
+		
+		return false;
 	}
 	
 	public void merge(Call other)
 	{
-		for (Enumeration e = other.connections.elements(); e.hasMoreElements();)
-		{
-			Connection conn = (Connection) e.nextElement();
-			other.connections.removeElement(conn);
-			connections.addElement(conn);
-		}
+		connections.addAll(other.getConnections());
+		other.getConnections().clear();
 	}
 	
-	public Vector<Customer> getConnections()
+	public List<Connection> getConnections()
 	{
 		return connections;
 	}
@@ -91,9 +90,8 @@ public class Call
 	{
 		Set<Customer> participants = new HashSet<>();
 		
-		for (Enumeration e = connections.elements(); e.hasMoreElements();)
+		for (Connection c : connections)
 		{
-			Connection c = (Connection) e.nextElement();
 			participants.add(c.getCaller());
 			participants.add(c.getReceiver());
 		}
@@ -109,6 +107,6 @@ public class Call
 			res += c.getName() + ", ";
 		}
 		
-		return res.substring(res.length() - 2);
+		return res.substring(0, res.length() - 2);
 	}
 }
