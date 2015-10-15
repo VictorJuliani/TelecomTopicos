@@ -18,6 +18,8 @@ about the software, its performance or its conformity to any specification.
 package telecom;
 
 import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Vector;
 
 /**
@@ -25,7 +27,6 @@ import java.util.Vector;
  */
 public class Call
 {
-	
 	private final Vector connections = new Vector();
 	
 	public Call(Customer caller, Customer receiver, boolean iM)
@@ -84,5 +85,30 @@ public class Call
 	public Vector<Customer> getConnections()
 	{
 		return connections;
+	}
+	
+	public Set<Customer> getParticipants()
+	{
+		Set<Customer> participants = new HashSet<>();
+		
+		for (Enumeration e = connections.elements(); e.hasMoreElements();)
+		{
+			Connection c = (Connection) e.nextElement();
+			participants.add(c.getCaller());
+			participants.add(c.getReceiver());
+		}
+		return participants;
+	}
+	
+	@Override
+	public String toString()
+	{
+		String res = "";
+		for (Customer c : getParticipants())
+		{
+			res += c.getName() + ", ";
+		}
+		
+		return res.substring(res.length() - 2);
 	}
 }

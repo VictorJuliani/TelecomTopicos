@@ -64,6 +64,7 @@ public class TelecomController
 		
 		call1.merge(call2);
 		activeCalls.remove(call2);
+		allCalls.remove(call2);
 		
 		return true;
 	}
@@ -102,6 +103,20 @@ public class TelecomController
 		
 		long preco = b.getTotalCharge(c);
 		return preco;
+	}
+	
+	public List<Call> getCalls(Customer customer)
+	{
+		List<Call> result = new ArrayList<>();
+		for (Call c : allCalls)
+		{
+			if (c.includes(customer))
+			{
+				result.add(c);
+			}
+		}
+		
+		return result;
 	}
 	
 	public static TelecomController getInstance()

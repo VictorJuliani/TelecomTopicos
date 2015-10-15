@@ -1,7 +1,8 @@
 package telecom.gui;
 
 import java.awt.Font;
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.DefaultListModel;
 import javax.swing.GroupLayout;
@@ -13,17 +14,21 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import telecom.Call;
+import telecom.Customer;
 import telecom.util.ListDetailListener;
 
 /**
  * @author Victor
+ * @param <T>
  */
-public class Info extends JFrame
+public class Info<T> extends JFrame
 {
 	private static final long serialVersionUID = 1L;
 	
@@ -39,9 +44,35 @@ public class Info extends JFrame
 	protected final JTextField txtCost = new JTextField();
 	protected final JTextField txtDuration = new JTextField();
 	
-	protected final ListDetailListener _listener;
+	protected final ListDetailListener<T> _listener;
 	
-	public Info(JFrame parent, String title, ListDetailListener listener)
+	protected List<T> items;
+	
+	public Info(JFrame parent, ListDetailListener<T> listener, List<T> customerCalls)
+	{
+		this(parent, "Ligações do Cliente", listener);
+		for (T c : customerCalls)
+		{
+			getModel().addElement(c.toString());
+		}
+		
+		items = customerCalls;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public Info(JFrame parent, ListDetailListener<T> listener, Call call)
+	{
+		this(parent, "Detalhes da Ligação", listener);
+		
+		items = new ArrayList<>();
+		for (Customer c : call.getParticipants())
+		{
+			items.add((T) c);
+			getModel().addElement(c.getName());
+		}
+	}
+	
+	private Info(JFrame parent, String title, ListDetailListener<T> listener)
 	{
 		_listener = listener;
 		
@@ -55,6 +86,11 @@ public class Info extends JFrame
 		setResizable(false);
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		
+		txtCost.setEditable(false);
+		txtDuration.setEditable(false);
+		
+		list.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		list.setModel(new DefaultListModel<String>());
 		list.getSelectionModel().addListSelectionListener(new ListSelectionListener()
 		{
 			@Override
@@ -66,7 +102,7 @@ public class Info extends JFrame
 					return;
 				}
 				
-				_listener.onItemSelected(list.getModel().getElementAt(index), txtDuration, txtCost);
+				_listener.onItemSelected(items.get(index), txtDuration, txtCost);
 			}
 		});
 		
@@ -89,7 +125,7 @@ public class Info extends JFrame
 		GroupLayout mainPanelLayout = new GroupLayout(mainPanel);
 		mainPanel.setLayout(mainPanelLayout);
 		mainPanelLayout.setHorizontalGroup(mainPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addGroup(mainPanelLayout.createSequentialGroup().addComponent(paneList, GroupLayout.PREFERRED_SIZE, 141, GroupLayout.PREFERRED_SIZE).addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(separator, GroupLayout.PREFERRED_SIZE, 3, GroupLayout.PREFERRED_SIZE).addGroup(mainPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addGroup(mainPanelLayout.createSequentialGroup().addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addGroup(mainPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(panelCost, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE).addComponent(panelDuration, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))).addGroup(mainPanelLayout.createSequentialGroup().addGap(39, 39, 39).addComponent(lblDetail))).addGap(0, 0, Short.MAX_VALUE)));
-		mainPanelLayout.setVerticalGroup(mainPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addGroup(mainPanelLayout.createSequentialGroup().addGroup(mainPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING, false).addComponent(paneList).addComponent(separator)).addGap(0, 0, Short.MAX_VALUE)).addGroup(mainPanelLayout.createSequentialGroup().addGap(2, 2, 2).addComponent(lblDetail).addGap(18, 18, 18).addComponent(panelDuration, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE).addGap(23, 23, 23).addComponent(panelCost, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE).addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
+		mainPanelLayout.setVerticalGroup(mainPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addGroup(mainPanelLayout.createSequentialGroup().addGroup(mainPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING, false).addComponent(paneList, GroupLayout.PREFERRED_SIZE, 120, 120).addComponent(separator)).addGap(0, 0, Short.MAX_VALUE)).addGroup(mainPanelLayout.createSequentialGroup().addGap(2, 2, 2).addComponent(lblDetail).addGap(18, 18, 18).addComponent(panelDuration, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE).addGap(23, 23, 23).addComponent(panelCost, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE).addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
 		
 		GroupLayout layout = new GroupLayout(getContentPane());
 		getContentPane().setLayout(layout);
@@ -99,13 +135,8 @@ public class Info extends JFrame
 		pack();
 	}
 	
-	public void setListItems(Collection<String> items)
+	public DefaultListModel<String> getModel()
 	{
-		DefaultListModel<String> model = ((DefaultListModel<String>) list.getModel());
-		model.clear();
-		for (String e : items)
-		{
-			model.addElement(e);
-		}
+		return ((DefaultListModel<String>) list.getModel());
 	}
 }

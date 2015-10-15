@@ -2,7 +2,7 @@ package telecom.util;
 
 import javax.swing.JTextField;
 
-public interface ListDetailListener
+public interface ListDetailListener<T>
 {
-	public void onItemSelected(String item, JTextField duration, JTextField cost);
+	public void onItemSelected(T item, JTextField duration, JTextField cost);
 }

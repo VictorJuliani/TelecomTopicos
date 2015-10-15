@@ -17,6 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.LayoutStyle;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
@@ -29,6 +30,7 @@ import telecom.Call;
 import telecom.Customer;
 import telecom.controller.TelecomController;
 import telecom.util.CustomerListener;
+import telecom.util.ListDetailListener;
 import telecom.util.TListSelectionModel;
 
 /**
@@ -70,6 +72,25 @@ public class Screen extends JFrame implements CustomerListener
 	protected final JTable customerTable = new JTable();
 	private final JSeparator horSeparator = new JSeparator();
 	private final JSeparator verSeparator = new JSeparator();
+	
+	protected final ListDetailListener<Customer> callListener = new ListDetailListener<Customer>()
+	{
+		@Override
+		public void onItemSelected(Customer item, JTextField duration, JTextField cost)
+		{
+			duration.setText(String.valueOf(TelecomController.getInstance().reportCustomerTime(item.getName())));
+			// cost.setText(String.valueOf(TelecomController.getInstance().reportCustomerBilling(item.getName())));
+		}
+	};
+	
+	protected final ListDetailListener<Call> customerListener = new ListDetailListener<Call>()
+	{
+		@Override
+		public void onItemSelected(Call item, JTextField duration, JTextField cost)
+		{
+			
+		}
+	};
 	
 	/**
 	 * Creates new form Screen
@@ -290,7 +311,13 @@ public class Screen extends JFrame implements CustomerListener
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				// TODO Auto-generated method stub
+				int row = callsList.getSelectedIndex();
+				if (row < 0)
+				{
+					return;
+				}
+				
+				new Info<>(Screen.this, callListener, TelecomController.getInstance().getCall(row)).setVisible(true);
 			}
 		});
 		

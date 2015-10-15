@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 
 import javax.swing.UIManager;
 
+import telecom.controller.TelecomController;
 import telecom.gui.Screen;
 
 public class TelecomGUI
@@ -34,6 +35,8 @@ public class TelecomGUI
 			public void run()
 			{
 				new Screen().setVisible(true);
+				TelecomController.getInstance().addCustomer("T1", 11, "12345678");
+				TelecomController.getInstance().addCustomer("T2", 11, "12345678");
 			}
 		});
 	}
