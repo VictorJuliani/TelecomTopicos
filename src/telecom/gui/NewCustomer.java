@@ -9,6 +9,7 @@ import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle;
@@ -90,9 +91,9 @@ public class NewCustomer extends JFrame implements ActionListener
 	@Override
 	public void actionPerformed(ActionEvent e)
 	{
-		// TODO if fail, show msg
 		if (!isValid(nameTxt) || !isValid(dddTxt) || !isValid(phoneTxt) || !isPhone(phoneTxt))
 		{
+			JOptionPane.showMessageDialog(this, "Preencha todos os campos, não repita nomes e insira um telefone válido.", "Falha na criação", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		
