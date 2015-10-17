@@ -102,9 +102,9 @@ public class Call
 	public String toString()
 	{
 		String res = "";
-		for (Customer c : getParticipants())
+		for (Connection c : connections)
 		{
-			res += c.getName() + ", ";
+			res += c.getCaller() + " -> " + c.getReceiver() + ", ";
 		}
 		
 		return res.substring(0, res.length() - 2);

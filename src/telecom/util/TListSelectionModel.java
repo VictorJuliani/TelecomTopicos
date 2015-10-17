@@ -5,6 +5,7 @@ import javax.swing.JList;
 
 public class TListSelectionModel extends DefaultListSelectionModel
 {
+	private static final long serialVersionUID = 1L;
 	private final JList<String> list;
 	private final int maxCount;
 	

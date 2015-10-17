@@ -36,27 +36,25 @@ public aspect Timing {
     /**
      * Start the timer when call completed
      */
-    after (Connection c) returning () : target(c) 
-	    && call(void Connection.complete()) {
+    after (Connection c): target(c) && call(void Connection.complete()) {
         getTimer(c).start();
     }
-    
-    // fault injected - 'call(void Connection.drop()))'
 
     /**
      * When to stop the timer
      */
     pointcut endTiming(Connection c): target(c) &&
         call(void Connection.drop());
-    
-    //fault injected - 'call(void Connection.complete()))' 
 
     /**
      * Stop the timer when call dropped and update the involved parties
      */
-    after(Connection c) returning () : endTiming(c) {
+    after(Connection c): endTiming(c) {
         getTimer(c).stop();
-        c.getCaller().totalConnectTime += getTimer(c).getTime();
-        c.getReceiver().totalConnectTime += getTimer(c).getTime();
+        //c.getCaller().totalConnectTime += getTimer(c).getTime();
+        //c.getReceiver().totalConnectTime += getTimer(c).getTime();
+        
+        c.getCaller().totalConnectTime = getTimer(c).getTime();
+        c.getReceiver().totalConnectTime = getTimer(c).getTime();
     }
 }

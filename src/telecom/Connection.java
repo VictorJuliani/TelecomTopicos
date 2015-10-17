@@ -23,7 +23,6 @@ package telecom;
  */
 public abstract class Connection
 {
-	
 	public static final int PENDING = 0;
 	public static final int COMPLETE = 1;
 	public static final int DROPPED = 2;
@@ -85,7 +84,7 @@ public abstract class Connection
 	void complete()
 	{
 		state = COMPLETE;
-		System.out.println("connection completed");
+		System.out.println("connection completed: " + caller.getName() + " -> " + receiver.getName());
 	}
 	
 	/**
@@ -95,7 +94,7 @@ public abstract class Connection
 	void drop()
 	{
 		state = DROPPED;
-		System.out.println("connection dropped");
+		System.out.println("connection dropped: " + caller.getName() + " -> " + receiver.getName());
 	}
 	
 	/**

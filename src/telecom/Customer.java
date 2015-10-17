@@ -17,7 +17,8 @@
  */
 package telecom;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Customers have a unique id (name in this case for didactic purposes but it
@@ -26,19 +27,18 @@ import java.util.Vector;
  */
 public class Customer
 {
-	
 	private final String name;
 	private String phoneNumber;
 	private final int areacode;
 	private String password;
-	private final Vector calls = new Vector();
+	private final List<Call> calls = new ArrayList<>();
 	
 	/**
 	 * unregister a call
 	 */
 	protected void removeCall(Call c)
 	{
-		calls.removeElement(c);
+		calls.remove(c);
 	}
 	
 	/**
@@ -46,7 +46,7 @@ public class Customer
 	 */
 	protected void addCall(Call c)
 	{
-		calls.addElement(c);
+		calls.add(c);
 	}
 	
 	/**

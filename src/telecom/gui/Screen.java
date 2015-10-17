@@ -5,8 +5,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.DefaultListModel;
 import javax.swing.GroupLayout;
@@ -71,18 +69,6 @@ public class Screen extends JFrame implements CustomerListener
 	private final JSeparator horSeparator = new JSeparator();
 	private final JSeparator verSeparator = new JSeparator();
 	
-	/*
-	 * protected final ListDetailListener<Customer> callListener = new ListDetailListener<Customer>()
-	 * {
-	 * @Override
-	 * public void onItemSelected(Customer item, JTextField duration, JTextField cost)
-	 * {
-	 * duration.setText(String.valueOf(TelecomController.getInstance().reportCustomerTime(item.getName())));
-	 * // cost.setText(String.valueOf(TelecomController.getInstance().reportCustomerBilling(item.getName())));
-	 * }
-	 * };
-	 */
-	
 	/**
 	 * Creates new form Screen
 	 */
@@ -123,6 +109,8 @@ public class Screen extends JFrame implements CustomerListener
 			}
 		});
 		
+		callFromList.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		callToList.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		customerTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		
 		customerTable.getSelectionModel().addListSelectionListener(new ListSelectionListener()
@@ -197,7 +185,10 @@ public class Screen extends JFrame implements CustomerListener
 				
 				if (callsList.getSelectedIndices().length == 2)
 				{
-					conferenceBtn.setEnabled(true);
+					Call c1 = TelecomController.getInstance().getCall(callsList.getSelectedIndices()[0]);
+					Call c2 = TelecomController.getInstance().getCall(callsList.getSelectedIndices()[1]);
+					
+					conferenceBtn.setEnabled(c1.isConnected() && c2.isConnected());
 					callStateBtn.setEnabled(false);
 				}
 				else
@@ -304,18 +295,7 @@ public class Screen extends JFrame implements CustomerListener
 				Call c = TelecomController.getInstance().getCall(indeces[0]);
 				TelecomController.getInstance().mergeCall(indeces[0], indeces[1]);
 				
-				String names = "";
-				List<Customer> v = new ArrayList<>(c.getParticipants());
-				for (int i = 0; i < v.size(); i++)
-				{
-					names += v.get(i).getName();
-					if (i < (v.size() - 1))
-					{
-						names += ", ";
-					}
-				}
-				
-				((DefaultListModel<String>) callsList.getModel()).set(indeces[0], names);
+				((DefaultListModel<String>) callsList.getModel()).set(indeces[0], c.toString());
 				((DefaultListModel<String>) callsList.getModel()).remove(indeces[1]);
 			}
 		});

@@ -22,8 +22,8 @@ import javax.swing.event.ListSelectionListener;
 
 import telecom.Customer;
 import telecom.controller.TelecomController;
-import telecom.util.CallHolder;
-import telecom.util.CustomerHolder;
+import telecom.holder.CallHolder;
+import telecom.holder.CustomerHolder;
 
 /**
  * @author Victor
@@ -87,7 +87,7 @@ public class Info extends JFrame
 				
 				CustomerHolder holder = items.get(index).getInfo(_customer);
 				
-				// TODO txtCost.setText(String.valueOf(holder.getCost()));
+				txtCost.setText(FORMATTER.format(holder.getCost()));
 				txtDuration.setText(FORMATTER.format(holder.getDuration()));
 			}
 		});

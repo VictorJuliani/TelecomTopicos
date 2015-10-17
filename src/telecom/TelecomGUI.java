@@ -36,7 +36,8 @@ public class TelecomGUI
 			{
 				new Screen().setVisible(true);
 				TelecomController.getInstance().addCustomer("T1", 11, "12345678");
-				TelecomController.getInstance().addCustomer("T2", 11, "12345678");
+				TelecomController.getInstance().addCustomer("T2", 12, "12345678");
+				TelecomController.getInstance().addCustomer("T3", 12, "62345678");
 			}
 		});
 	}

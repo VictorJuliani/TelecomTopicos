@@ -104,6 +104,7 @@ public class NewCustomer extends JFrame implements ActionListener
 		}
 		catch (Exception ex)
 		{
+			JOptionPane.showMessageDialog(this, "Preencha o DDD apenas com números.", "DDD inválido", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		

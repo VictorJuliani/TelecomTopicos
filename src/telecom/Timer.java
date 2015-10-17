@@ -30,7 +30,8 @@ public class Timer
 	public void start()
 	{
 		startTime = System.currentTimeMillis();
-		stopTime = startTime;
+		// stopTime = startTime;
+		stopTime = 0;
 	}
 	
 	/**
