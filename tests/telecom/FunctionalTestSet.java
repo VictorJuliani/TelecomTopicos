@@ -152,7 +152,12 @@ public class FunctionalTestSet
 		
 		Thread.sleep(wait);
 		call1.merge(call2);
+		assertTrue(call1.includes(c1));
+		assertTrue(call1.includes(c2));
+		assertTrue(call1.includes(c3));
+		
 		call1.hangup();
+		assertFalse(call1.isConnected());
 		
 		assertEquals(wait, call1.getCustomer(c1).getDuration(), 20);
 		assertEquals(call1.getCustomer(c1).getDuration(), call1.getCustomer(c2).getDuration(), 20);
