@@ -53,8 +53,7 @@ public aspect Timing {
         getTimer(c).stop();
         //c.getCaller().totalConnectTime += getTimer(c).getTime();
         //c.getReceiver().totalConnectTime += getTimer(c).getTime();
-        
-        c.getCaller().totalConnectTime = getTimer(c).getTime();
-        c.getReceiver().totalConnectTime = getTimer(c).getTime();
+        c.getCustomer(c.getCaller()).setDuration(getTimer(c).getTime());
+        c.getCustomer(c.getReceiver()).setDuration(getTimer(c).getTime());
     }
 }

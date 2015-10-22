@@ -18,9 +18,12 @@ about the software, its performance or its conformity to any specification.
 package telecom;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+
+import telecom.holder.CustomerHolder;
 
 /**
  * A call supports the process of a customer trying to connect to others.
@@ -28,19 +31,22 @@ import java.util.Set;
 public class Call
 {
 	private final List<Connection> connections = new ArrayList<>();
+	private final Map<Customer, CustomerHolder> customers = new HashMap<>();
 	
 	public Call(Customer caller, Customer receiver, boolean iM)
 	{
 		Connection c;
 		if (receiver.localTo(caller))
 		{
-			c = new Local(caller, receiver, iM);
+			c = new Local(caller, receiver, this, iM);
 		}
 		else
 		{
-			c = new LongDistance(caller, receiver, iM);
+			c = new LongDistance(caller, receiver, this, iM);
 		}
 		connections.add(c);
+		customers.put(caller, new CustomerHolder());
+		customers.put(receiver, new CustomerHolder());
 	}
 	
 	public void pickup()
@@ -77,7 +83,13 @@ public class Call
 	
 	public void merge(Call other)
 	{
-		connections.addAll(other.getConnections());
+		for (Connection c : other.getConnections())
+		{
+			c.setCall(this);
+			connections.add(c);
+			mergeCustomer(c.getCaller(), other.getCustomer(c.getCaller()));
+			mergeCustomer(c.getReceiver(), other.getCustomer(c.getReceiver()));
+		}
 		other.getConnections().clear();
 	}
 	
@@ -86,16 +98,19 @@ public class Call
 		return connections;
 	}
 	
+	public CustomerHolder getCustomer(Customer c)
+	{
+		return customers.get(c);
+	}
+	
+	public Map<Customer, CustomerHolder> getCustomers()
+	{
+		return customers;
+	}
+	
 	public Set<Customer> getParticipants()
 	{
-		Set<Customer> participants = new HashSet<>();
-		
-		for (Connection c : connections)
-		{
-			participants.add(c.getCaller());
-			participants.add(c.getReceiver());
-		}
-		return participants;
+		return customers.keySet();
 	}
 	
 	@Override
@@ -108,5 +123,14 @@ public class Call
 		}
 		
 		return res.substring(0, res.length() - 2);
+	}
+	
+	private void mergeCustomer(Customer c, CustomerHolder old)
+	{
+		CustomerHolder ch = customers.get(c);
+		if (ch == null)
+		{
+			customers.put(c, old == null ? new CustomerHolder() : old);
+		}
 	}
 }

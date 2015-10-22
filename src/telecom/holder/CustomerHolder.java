@@ -1,27 +1,43 @@
 package telecom.holder;
 
-import telecom.Customer;
-
 public class CustomerHolder
 {
-	private final double _cost;
-	private final double _duration;
+	private long _cost;
+	private long _duration;
 	
-	public CustomerHolder(Customer c, long duration, long cost)
+	public CustomerHolder()
 	{
-		_cost = ((double) cost) / 100000;
-		_duration = ((double) duration) / 1000;
-		
-		System.out.println(c.getName() + " - duration: " + _duration + ", cost: " + _cost);
+		_cost = 0;
+		_duration = 0;
 	}
 	
-	public double getCost()
+	public void addCost(long cost)
+	{
+		_cost += cost;
+	}
+	
+	public void setDuration(long dur)
+	{
+		_duration = Math.max(_duration, dur);
+	}
+	
+	public long getCost()
 	{
 		return _cost;
 	}
 	
-	public double getDuration()
+	public long getDuration()
 	{
 		return _duration;
+	}
+	
+	public double getCostMs()
+	{
+		return ((double) _cost) / 100000;
+	}
+	
+	public double getDurationMs()
+	{
+		return ((double) _duration) / 1000;
 	}
 }

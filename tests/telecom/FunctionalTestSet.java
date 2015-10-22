@@ -11,7 +11,7 @@ import org.junit.Test;
 public class FunctionalTestSet
 {
 	static Customer c1, c2, c3;
-	static Call call1, call2, call3, call4, call5;
+	static Call call1, call2, call3;
 	
 	@BeforeClass
 	public static void setup()
@@ -78,14 +78,14 @@ public class FunctionalTestSet
 	@Test(expected = Exception.class)
 	public void test04() throws NullPointerException
 	{
-		call4 = new Call(null, c2, false);
+		new Call(null, c2, false);
 	}
 	
 	/* Teste funcional 5: testando se uma excessao e lancada quando receiver eh null */
 	@Test(expected = Exception.class)
 	public void test05() throws NullPointerException
 	{
-		call5 = new Call(c1, null, false);
+		new Call(c1, null, false);
 	}
 	
 	/* Teste funcional 6: Verificar resultados apos hangup para ligacao local */
@@ -100,13 +100,10 @@ public class FunctionalTestSet
 		
 		assertFalse(call1.isConnected());
 		
-		Timing t = Timing.aspectOf();
-		Billing b = Billing.aspectOf();
-		
-		assertEquals(wait, t.getTotalConnectTime(c1), 50);
-		assertEquals(t.getTotalConnectTime(c1), t.getTotalConnectTime(c2));
-		assertEquals(0, b.getTotalCharge(c2));
-		assertEquals(wait * 3, b.getTotalCharge(c1), 150);
+		assertEquals(wait, call1.getCustomer(c1).getDuration(), 50);
+		assertEquals(call1.getCustomer(c1).getDuration(), call1.getCustomer(c2).getDuration(), 0);
+		assertEquals(0, call1.getCustomer(c2).getCost(), 0);
+		assertEquals(wait * 3, call1.getCustomer(c1).getCost(), 150);
 	}
 	
 	/* Teste funcional 7: Verificar resultados apos hangup para ligacao longa distancia */
@@ -121,13 +118,10 @@ public class FunctionalTestSet
 		
 		assertFalse(call2.isConnected());
 		
-		Timing t = Timing.aspectOf();
-		Billing b = Billing.aspectOf();
-		
-		assertEquals(wait, t.getTotalConnectTime(c1), 50);
-		assertEquals(t.getTotalConnectTime(c1), t.getTotalConnectTime(c3));
-		assertEquals(0, b.getTotalCharge(c3));
-		assertEquals(wait * 10, b.getTotalCharge(c1), 150);
+		assertEquals(wait, call2.getCustomer(c1).getDuration(), 50);
+		assertEquals(call2.getCustomer(c1).getDuration(), call2.getCustomer(c3).getDuration(), 0);
+		assertEquals(0, call2.getCustomer(c3).getCost(), 0);
+		assertEquals(wait * 10, call2.getCustomer(c1).getCost(), 150);
 	}
 	
 	/* Teste funcional 8: Verificar resultados apos hangup para ligacao mobile longa distancia */
@@ -142,16 +136,13 @@ public class FunctionalTestSet
 		
 		assertFalse(call3.isConnected());
 		
-		Timing t = Timing.aspectOf();
-		Billing b = Billing.aspectOf();
-		
-		assertEquals(wait, t.getTotalConnectTime(c1), 50);
-		assertEquals(t.getTotalConnectTime(c1), t.getTotalConnectTime(c3));
-		assertEquals(wait * 5, b.getTotalCharge(c3), 10);
-		assertEquals(wait * 10, b.getTotalCharge(c1), 150);
+		assertEquals(wait, call3.getCustomer(c1).getDuration(), 50);
+		assertEquals(call3.getCustomer(c1).getDuration(), call3.getCustomer(c3).getDuration(), 0);
+		assertEquals(wait * 5, call3.getCustomer(c3).getCost(), 10);
+		assertEquals(wait * 10, call3.getCustomer(c1).getCost(), 150);
 	}
 	
-	/* Teste funcional 9: Verificar resultados apos merge das tres ligacoes */
+	/* Teste funcional 9: Verificar resultados apos merge das ligacoes call1 e call2 */
 	@Test
 	public void test09() throws InterruptedException
 	{
@@ -163,14 +154,11 @@ public class FunctionalTestSet
 		call1.merge(call2);
 		call1.hangup();
 		
-		Timing t = Timing.aspectOf();
-		Billing b = Billing.aspectOf();
-		
-		assertEquals(wait, t.getTotalConnectTime(c1), 20);
-		assertEquals(t.getTotalConnectTime(c1), t.getTotalConnectTime(c2), 20);
-		assertEquals(t.getTotalConnectTime(c1), t.getTotalConnectTime(c3), 20);
-		assertEquals(0, b.getTotalCharge(c2));
-		assertEquals(0, b.getTotalCharge(c3));
-		assertEquals((wait * 3) + (wait * 10), b.getTotalCharge(c1), 260);
+		assertEquals(wait, call1.getCustomer(c1).getDuration(), 20);
+		assertEquals(call1.getCustomer(c1).getDuration(), call1.getCustomer(c2).getDuration(), 20);
+		assertEquals(call1.getCustomer(c1).getDuration(), call1.getCustomer(c3).getDuration(), 20);
+		assertEquals(0, call1.getCustomer(c2).getCost(), 0);
+		assertEquals(0, call1.getCustomer(c3).getCost(), 0);
+		assertEquals((wait * 3) + (wait * 10), call1.getCustomer(c1).getCost(), 260);
 	}
 }

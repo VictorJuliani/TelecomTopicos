@@ -19,9 +19,9 @@ package telecom;
 
 public class LongDistance extends Connection
 {
-	LongDistance(Customer a, Customer b, boolean iM)
+	LongDistance(Customer a, Customer b, Call c, boolean iM)
 	{
-		super(a, b, iM);
+		super(a, b, c, iM);
 		String str = new String("");
 		if (iM)
 		{

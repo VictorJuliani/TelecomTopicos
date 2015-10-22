@@ -38,14 +38,14 @@ public aspect Billing {
     	return numPayingCalls;
     }
     
-    pointcut createConnection(Customer caller, Customer receiver, boolean iM) : 
-    	args(caller, receiver, iM) && call(Connection+.new(..));
+    pointcut createConnection(Customer caller, Customer receiver, Call _call, boolean iM) : 
+    	args(caller, receiver, _call, iM) && call(Connection+.new(..));
     
     /**
      * Caller pays for the call, unless it is a 0800-* phone number
      */
-    after(Customer caller, Customer receiver, boolean iM) returning (Connection c):
-        createConnection(caller, receiver, iM) {
+    after(Customer caller, Customer receiver, Call _call, boolean iM) returning (Connection c):
+        createConnection(caller, receiver, _call, iM) {
     	if (receiver.getPhoneNumber().indexOf("0800") == 0)
 		{
 			c.payer = receiver;
@@ -65,7 +65,6 @@ public aspect Billing {
     public long LongDistance.callRate() { return LONG_DISTANCE_RATE; }
     public long Local.callRate() { return LOCAL_RATE; }
 
-
     /**
      * When timing stops, calculate and add the charge from the
      * connection time
@@ -78,21 +77,9 @@ public aspect Billing {
             if (conn instanceof LongDistance) {
               long receiverCost = 
                 MOBILE_LD_RECEIVER_RATE * time;
-              conn.getReceiver().addCharge(receiverCost);
+              conn.getCustomer(conn.getReceiver()).addCost(receiverCost);
             }        
         }
-        getPayer(conn).addCharge(cost);
-    }
-
-
-    /**
-     * Customers have a bill paying aspect with state
-     */
-    public long Customer.totalCharge = 0;
-    public long getTotalCharge(Customer cust) { return cust.totalCharge; }
-
-    public void Customer.addCharge(long charge){
-        //totalCharge += charge;
-    	totalCharge = charge;
+        conn.getCustomer(getPayer(conn)).addCost(cost);
     }
 }

@@ -17,6 +17,8 @@ about the software, its performance or its conformity to any specification.
  */
 package telecom;
 
+import telecom.holder.CustomerHolder;
+
 /**
  * Connections are circuits between customers There are two kinds: local and
  * long distance see subclasses at the end of this file.
@@ -30,6 +32,7 @@ public abstract class Connection
 	Customer caller, receiver;
 	boolean isMobile = false;
 	private int state = PENDING;
+	private Call call;
 	
 	@Override
 	public String toString()
@@ -41,10 +44,11 @@ public abstract class Connection
 	/**
 	 * Creatte a new Connection between a and b
 	 */
-	Connection(Customer a, Customer b, boolean tmpIsMobile)
+	Connection(Customer a, Customer b, Call c, boolean tmpIsMobile)
 	{
 		caller = a;
 		receiver = b;
+		call = c;
 		isMobile = tmpIsMobile;
 	}
 	
@@ -70,6 +74,11 @@ public abstract class Connection
 	public Customer getReceiver()
 	{
 		return receiver;
+	}
+	
+	public CustomerHolder getCustomer(Customer c)
+	{
+		return call.getCustomer(c);
 	}
 	
 	public boolean isMobile()
@@ -105,4 +114,8 @@ public abstract class Connection
 		return ((caller == c) || (receiver == c));
 	}
 	
+	public void setCall(Call call)
+	{
+		this.call = call;
+	}
 }

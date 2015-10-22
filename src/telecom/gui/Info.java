@@ -87,8 +87,8 @@ public class Info extends JFrame
 				
 				CustomerHolder holder = items.get(index).getInfo(_customer);
 				
-				txtCost.setText(FORMATTER.format(holder.getCost()));
-				txtDuration.setText(FORMATTER.format(holder.getDuration()));
+				txtCost.setText(FORMATTER.format(holder.getCostMs()));
+				txtDuration.setText(FORMATTER.format(holder.getDurationMs()));
 			}
 		});
 		

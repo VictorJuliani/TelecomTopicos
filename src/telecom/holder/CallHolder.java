@@ -3,10 +3,8 @@ package telecom.holder;
 import java.util.HashMap;
 import java.util.Map;
 
-import telecom.Billing;
 import telecom.Call;
 import telecom.Customer;
-import telecom.Timing;
 
 public class CallHolder
 {
@@ -17,13 +15,7 @@ public class CallHolder
 	public CallHolder(Call call)
 	{
 		_title = call.toString();
-		Timing t = Timing.aspectOf();
-		Billing b = Billing.aspectOf();
-		
-		for (Customer c : call.getParticipants())
-		{
-			infos.put(c, new CustomerHolder(c, t.getTotalConnectTime(c), b.getTotalCharge(c)));
-		}
+		infos.putAll(call.getCustomers());
 	}
 	
 	public CustomerHolder getInfo(Customer c)
