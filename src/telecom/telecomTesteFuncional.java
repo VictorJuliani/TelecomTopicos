@@ -10,7 +10,7 @@ import org.junit.Test;
 public class telecomTesteFuncional
 {
 	static Customer c1, c2, c3;
-	static Call call1, call2, call3;
+	static Call call1, call2, call3, call4, call5;
 	
 	@Before
 	public void setup()
@@ -22,42 +22,71 @@ public class telecomTesteFuncional
 		call1 = new Call(c1, c2, false);
 		call2 = new Call(c1, c3, false);
 		call3 = new Call(c1, c3, true);
+		
 	}
 	
-	/* Teste Funcional 1: Ligacao local - verificar conexao */
+	/* Teste Funcional 1: Ligacao local - verificar conexao e se os
+	 * customers corretos estao conectados*/
 	@Test
 	public void test01()
 	{
 		call1.pickup();
 		assertTrue(call1.isConnected());
+		assertTrue(call1.includes(c1));
+		assertTrue(call1.includes(c2));
+		assertFalse(call1.includes(c3));
 	}
 	
-	/* Teste Funcional 2: Ligacao a distancia - verificar conexao */
-	@Test
+	/* Teste Funcional 2: Ligacao a distancia - verificar conexao e se os
+	 * customers corretos estao conectados*/
+	@Test 
 	public void test02()
 	{
-		call2 = new Call(c1, c3, false);
 		call2.pickup();
 		assertTrue(call2.isConnected());
+		assertTrue(call2.includes(c1));
+		assertTrue(call2.includes(c3));
+		assertFalse(call2.includes(c2));
 	}
 	
-	/* Teste Funcional 3: Ligacao mobile a distancia - verificar conexao */
+	/* Teste Funcional 3: Ligacao mobile a distancia - verificar conexao e se os
+	 * customers corretos estao conectados*/
 	@Test
 	public void test03()
 	{
 		call3.pickup();
 		assertTrue(call3.isConnected());
+		assertTrue(call3.includes(c1));
+		assertTrue(call3.includes(c3));
+		assertFalse(call3.includes(c2));
 	}
 	
-	/* Teste funcional 4: Verificar resultados apos hangup para ligacao local */
+	
+	/*Teste funcional 4: testando se uma excessao e lancada quando caller eh null*/
+	@Test(expected = Exception.class) 
+	public void test04() throws NullPointerException
+	{
+		call4 = new Call(null, c2, false);
+	}
+	
+	/*Teste funcional 5: testando se uma excessao e lancada quando receiver eh null*/
+	@Test(expected = Exception.class) 
+	public void test05() throws NullPointerException
+	{
+		call5 = new Call(c1, null, false);
+	}
+	
+	/* Teste funcional 7: Verificar resultados apos hangup para ligacao local */
 	@Test
-	public void test04() throws InterruptedException
+	public void test07() throws InterruptedException
 	{
 		int wait = 500;
 		
 		Thread.sleep(wait);
 		call1.hangup();
 		assertFalse(call1.isConnected());
+		assertFalse(call1.includes(c1));
+		assertFalse(call1.includes(c2));
 		Timing t = Timing.aspectOf();
 		Billing b = Billing.aspectOf();
 		assertEquals(wait, t.getTotalConnectTime(c1), 50);
@@ -66,9 +95,9 @@ public class telecomTesteFuncional
 		assertEquals(wait * 3, b.getTotalCharge(c1), 150);
 	}
 	
-	/* Teste funcional 5: Verificar resultados apos hangup para ligacao longa distancia */
+	/* Teste funcional 8: Verificar resultados apos hangup para ligacao longa distancia */
 	@Test
-	public void test05() throws InterruptedException
+	public void test08() throws InterruptedException
 	{
 		call2 = new Call(c1, c3, false);
 		int wait = 500;
@@ -84,9 +113,9 @@ public class telecomTesteFuncional
 		assertEquals(wait * 10, b.getTotalCharge(c1), 650);
 	}
 	
-	/* Teste funcional 6: Verificar resultados apos hangup para ligacao mobile longa distancia */
+	/* Teste funcional 9: Verificar resultados apos hangup para ligacao mobile longa distancia */
 	@Test
-	public void test06() throws InterruptedException
+	public void test09() throws InterruptedException
 	{
 		int wait = 500;
 		
@@ -101,9 +130,9 @@ public class telecomTesteFuncional
 		assertEquals(wait * 10, b.getTotalCharge(c1), 1150);
 	}
 	
-	/* Teste funcional 7: Verificar resultados apos merge das tres ligacoes */
+	/* Teste funcional 10: Verificar resultados apos merge das tres ligacoes */
 	@Test
-	public void test07() throws InterruptedException
+	public void test10() throws InterruptedException
 	{
 		call1.includes(c3);
 		call1.merge(call3);
