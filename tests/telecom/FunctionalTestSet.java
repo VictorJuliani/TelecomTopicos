@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class FunctionalTestSet
@@ -12,13 +13,17 @@ public class FunctionalTestSet
 	static Customer c1, c2, c3;
 	static Call call1, call2, call3, call4, call5;
 	
-	@Before
-	public void setup()
+	@BeforeClass
+	public static void setup()
 	{
 		c1 = new Customer("nome1", 12, "12343212");
 		c2 = new Customer("nome2", 12, "12343214");
 		c3 = new Customer("nome5", 16, "12643212");
-		
+	}
+	
+	@Before
+	public void reload()
+	{
 		call1 = new Call(c1, c2, false);
 		call2 = new Call(c1, c3, false);
 		call3 = new Call(c1, c3, true);
@@ -142,7 +147,7 @@ public class FunctionalTestSet
 		
 		assertEquals(wait, t.getTotalConnectTime(c1), 50);
 		assertEquals(t.getTotalConnectTime(c1), t.getTotalConnectTime(c3));
-		assertEquals(0, b.getTotalCharge(c3), 10);
+		assertEquals(wait * 5, b.getTotalCharge(c3), 10);
 		assertEquals(wait * 10, b.getTotalCharge(c1), 150);
 	}
 	
