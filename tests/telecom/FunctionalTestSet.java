@@ -173,8 +173,37 @@ public class FunctionalTestSet
 		assertEquals((wait * 3) + (wait * 10), call1.getCustomer(c1).getCost(), 260);
 	}
 	
+	/* Teste funcional 9: Verificar resultados apos merge das ligacoes call1 e call2 */
 	@Test
-	public void test10()
+	public void test10() throws InterruptedException
+	{
+		call1.pickup();
+		call2.pickup();
+		call3.pickup();
+		int wait = 500;
+		
+		Thread.sleep(wait);
+		call1.merge(call2);
+		call1.merge(call3);
+		assertTrue(call1.isConnected());
+		assertTrue(call1.includes(c1));
+		assertTrue(call1.includes(c2));
+		assertTrue(call1.includes(c3));
+		assertFalse(call1.includes(new Customer("nome6", 11, "12345678")));
+		
+		call1.hangup();
+		assertFalse(call1.isConnected());
+		
+		assertEquals(wait, call1.getCustomer(c1).getDuration(), 20);
+		assertEquals(call1.getCustomer(c1).getDuration(), call1.getCustomer(c2).getDuration(), 20);
+		assertEquals(call1.getCustomer(c1).getDuration(), call1.getCustomer(c3).getDuration(), 20);
+		assertEquals(0, call1.getCustomer(c2).getCost(), 0);
+		assertEquals((wait * 5), call1.getCustomer(c3).getCost(), 100);
+		assertEquals((wait * 3) + (2 * (wait * 10)), call1.getCustomer(c1).getCost(), 460);
+	}
+	
+	@Test
+	public void test11()
 	{
 		// Create a stream to hold the output
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
