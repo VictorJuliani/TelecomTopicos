@@ -3,6 +3,10 @@ package telecom;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -165,5 +169,34 @@ public class FunctionalTestSet
 		assertEquals(0, call1.getCustomer(c2).getCost(), 0);
 		assertEquals(0, call1.getCustomer(c3).getCost(), 0);
 		assertEquals((wait * 3) + (wait * 10), call1.getCustomer(c1).getCost(), 260);
+	}
+	
+	@Test
+	public void test10()
+	{
+		// Create a stream to hold the output
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		PrintStream ps = new PrintStream(baos);
+		// IMPORTANT: Save the old System.out!
+		PrintStream old = System.err;
+		// Tell Java to use your special stream
+		System.setErr(ps);
+		
+		call1.pickup();
+		call1.hangup();
+		
+		String[] output = baos.toString().split("\n");
+		
+		if (!output[0].startsWith("Timer started"))
+		{
+			fail();
+		}
+		
+		if (!output[1].startsWith("Timer stopped"))
+		{
+			fail();
+		}
+		
+		System.setErr(old);
 	}
 }
