@@ -156,6 +156,7 @@ public class FunctionalTestSet
 		
 		Thread.sleep(wait);
 		call1.merge(call2);
+		assertTrue(call1.isConnected());
 		assertTrue(call1.includes(c1));
 		assertTrue(call1.includes(c2));
 		assertTrue(call1.includes(c3));
