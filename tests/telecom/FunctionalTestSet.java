@@ -159,6 +159,7 @@ public class FunctionalTestSet
 		assertTrue(call1.includes(c1));
 		assertTrue(call1.includes(c2));
 		assertTrue(call1.includes(c3));
+		assertFalse(call1.includes(new Customer("nome6", 11, "12345678")));
 		
 		call1.hangup();
 		assertFalse(call1.isConnected());
