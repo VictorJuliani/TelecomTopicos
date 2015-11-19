@@ -222,12 +222,10 @@ public class FunctionalTestSet
 		{
 			fail();
 		}
-		
 		if (!output[1].startsWith("Timer stopped"))
 		{
 			fail();
 		}
-		
 		System.setErr(old);
 	}
 }

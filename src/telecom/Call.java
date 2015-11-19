@@ -17,79 +17,86 @@ about the software, its performance or its conformity to any specification.
  */
 package telecom;
 
-import java.util.Enumeration;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Vector;
+import java.util.Set;
 
 import telecom.holder.CustomerHolder;
 
 /**
- * A call supports the process of a customer trying to
- * connect to others.
+ * A call supports the process of a customer trying to connect to others.
  */
 public class Call
 {
-	
-	private final Customer caller, receiver;
-	private final Vector connections = new Vector();
-	
+	private final List<Connection> connections = new ArrayList<>();
 	private final Map<Customer, CustomerHolder> customers = new HashMap<>();
 	
 	public Call(Customer caller, Customer receiver, boolean iM)
 	{
-		this.caller = caller;
-		this.receiver = receiver;
 		Connection c;
 		if (receiver.localTo(caller))
 		{
-			c = new LongDistance(caller, receiver, iM); // [OO-2]
-			// c = new Local(caller, receiver, iM);
+			// c = new LongDistance(caller, receiver, this, iM); // [OO-2]
+			c = new Local(caller, receiver, this, iM);
 		}
 		else
 		{
-			c = new LongDistance(caller, receiver, iM);
+			c = new LongDistance(caller, receiver, this, iM);
 		}
-		connections.addElement(c);
+		connections.add(c);
+		customers.put(caller, new CustomerHolder());
+		customers.put(receiver, new CustomerHolder());
 	}
 	
 	public void pickup()
 	{
-		Connection connection = (Connection) connections.lastElement();
+		Connection connection = connections.get(connections.size() - 1);
 		connection.complete();
 	}
 	
 	public boolean isConnected()
 	{
-		return ((Connection) connections.lastElement()).getState() == Connection.COMPLETE;
+		return (connections.get(connections.size() - 1)).getState() == Connection.COMPLETE;
 	}
 	
 	public void hangup()
 	{
-		for (Enumeration e = connections.elements(); e.hasMoreElements();)
+		for (Connection c : connections)
 		{
-			((Connection) e.nextElement()).drop();
+			c.drop();
 		}
 	}
 	
 	public boolean includes(Customer c)
 	{
-		boolean result = false;
-		for (Enumeration e = connections.elements(); e.hasMoreElements();)
+		for (Connection con : connections)
 		{
-			result = result || ((Connection) e.nextElement()).connects(c);
+			if (con.connects(c))
+			{
+				return true;
+			}
 		}
-		return result;
+		
+		return false;
 	}
 	
 	public void merge(Call other)
 	{
-		for (Enumeration e = other.connections.elements(); e.hasMoreElements();)
+		for (Connection c : other.getConnections())
 		{
-			Connection conn = (Connection) e.nextElement();
-			other.connections.removeElement(conn);
-			connections.addElement(conn);
+			c.setCall(this);
+			connections.add(c);
+			mergeCustomer(c.getCaller(), other.getCustomer(c.getCaller()));
+			mergeCustomer(c.getReceiver(), other.getCustomer(c.getReceiver()));
 		}
+		other.getConnections().clear();
+	}
+	
+	public List<Connection> getConnections()
+	{
+		return connections;
 	}
 	
 	public CustomerHolder getCustomer(Customer c)
@@ -100,5 +107,31 @@ public class Call
 	public Map<Customer, CustomerHolder> getCustomers()
 	{
 		return customers;
+	}
+	
+	public Set<Customer> getParticipants()
+	{
+		return customers.keySet();
+	}
+	
+	@Override
+	public String toString()
+	{
+		String res = "";
+		for (Connection c : connections)
+		{
+			res += c.getCaller() + " -> " + c.getReceiver() + ", ";
+		}
+		
+		return res.substring(0, res.length() - 2);
+	}
+	
+	private void mergeCustomer(Customer c, CustomerHolder old)
+	{
+		CustomerHolder ch = customers.get(c);
+		if (ch == null)
+		{
+			customers.put(c, old == null ? new CustomerHolder() : old);
+		}
 	}
 }

@@ -30,33 +30,32 @@ public aspect Timing {
     /**
      * Every connection has a timer
      */
-    private Timer Connection.timer = new Timer();
+    private final Timer Connection.timer = new Timer();
     public Timer getTimer(Connection conn) { return conn.timer; }
 
     /**
      * Start the timer when call completed
      */
-    after (Connection c) returning () : target(c) 
-	    && call(void Connection.*()) {  // [OA-2]
-    	//&& call(void Connection.complete()) {
+    after (Connection c): target(c)
+    	//&& call(void Connection.*()) {  // [OA-2]
+        	&& call(void Connection.complete()) {
         getTimer(c).start();
     }
-    
+
     /**
      * When to stop the timer
      */
     pointcut endTiming(Connection c): target(c) &&
         call(void Connection.drop());
-    
+
     /**
      * Stop the timer when call dropped and update the involved parties
      */
-    after(Connection c) returning () : endTiming(c) {
+    after(Connection c): endTiming(c) {
         getTimer(c).stop();
-        c.getCaller().totalConnectTime = getTimer(c).getTime(); // [DC-4]
         //c.getCaller().totalConnectTime += getTimer(c).getTime();
-        c.getReceiver().totalConnectTime += getTimer(c).getTime();
+        //c.getReceiver().totalConnectTime += getTimer(c).getTime();
+        c.getCustomer(c.getCaller()).setDuration(getTimer(c).getTime());
+        c.getCustomer(c.getReceiver()).setDuration(getTimer(c).getTime());
     }
-    
-    
 }

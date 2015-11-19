@@ -11,9 +11,6 @@ about the software, its performance or its conformity to any specification.
 */
 
 package telecom;
-
-import org.aspectj.lang.annotation.AdviceName;
-
 /**
  * The Billing aspect deals with... billing.
  * How much money did each connection cost?
@@ -27,82 +24,63 @@ import org.aspectj.lang.annotation.AdviceName;
  */
 public aspect Billing {
     // precedence required to get advice on endtiming in the right order
-    declare precedence: Billing, Timing; 
+    declare precedence: Billing, Timing;
 
     public static final long LOCAL_RATE = 3;
-    public static final long LONG_DISTANCE_RATE = 10;
+    public static final long LONG_DISTANCE_RATE = 10;   
     public static final long MOBILE_LD_RECEIVER_RATE = 5;
 
-    private Customer Connection.payer;
+    public Customer Connection.payer;
     public Customer getPayer(Connection conn) { return conn.payer; }
     
     private int Customer.numPayingCalls = 0;
     public int Customer.getNumPayingCalls() {
-    	return this.numPayingCalls;
+    	return numPayingCalls;
     }
     
-    pointcut createConnection(Customer caller, Customer receiver, boolean iM) : 
-    	args(caller, receiver, iM) && call(Connection+.new(..));
+    pointcut createConnection(Customer caller, Customer receiver, Call _call, boolean iM) : 
+    	args(caller, receiver, _call, iM) && call(Connection+.new(..));
     
-   
     /**
      * Caller pays for the call, unless it is a 0800-* phone number
      */
-    after(Customer caller, Customer receiver, boolean iM) returning (Connection c):
-        createConnection(receiver, caller, iM) { // [OA-3]
-    	//createConnection(caller, receiver, iM) {
+    after(Customer caller, Customer receiver, Call _call, boolean iM) returning (Connection c):
+    	//createConnection(receiver, caller, _call, iM) { // [OA-3]
+    	createConnection(caller, receiver, _call, iM) {
     	if (receiver.getPhoneNumber().indexOf("0800") == 0)
-    	  c.payer = receiver;
-    	else
-          c.payer = caller;
+		{
+			c.payer = receiver;
+		}
+		else
+		{
+			c.payer = caller;
+		}
         c.payer.numPayingCalls += 1; 
     }
-
+    
     /**
      * Connections give the appropriate call rate
      */
     public abstract long Connection.callRate();
 
-
-    public long LongDistance.callRate() { 
-    	return LONG_DISTANCE_RATE; 
-    }
-    
-    public long Local.callRate() { 
-    	return LOCAL_RATE; 
-    }
-
+    public long LongDistance.callRate() { return LONG_DISTANCE_RATE; }
+    public long Local.callRate() { return LOCAL_RATE; }
 
     /**
      * When timing stops, calculate and add the charge from the
      * connection time
-     * if it is a mobile long distance connection, receiver pays 
-     * a specific amount
      */
-    after(Connection conn) returning () : Timing.endTiming(conn) {
+    after(Connection conn): Timing.endTiming(conn) {
         long time = Timing.aspectOf().getTimer(conn).getTime();
         long rate = conn.callRate();
-        long cost = rate * time;        
+        long cost = rate * time;
         if (conn.isMobile()) {
-          if (conn instanceof LongDistance) {
-            long receiverCost = 
-              MOBILE_LD_RECEIVER_RATE * time;
-            conn.getReceiver().addCharge(receiverCost);
-          }        
+            if (conn instanceof LongDistance) {
+              long receiverCost = 
+                MOBILE_LD_RECEIVER_RATE * time;
+              conn.getCustomer(conn.getReceiver()).addCost(receiverCost);
+            }        
         }
-        getPayer(conn).addCharge(cost);
-    }
-
-
-    /**
-     * Customers have a bill paying aspect with state
-     */
-    public long Customer.totalCharge = 0;
-    public long getTotalCharge(Customer cust) { 
-      return cust.totalCharge; 
-    }
-
-    public void Customer.addCharge(long charge){
-        totalCharge += charge;
+        conn.getCustomer(getPayer(conn)).addCost(cost);
     }
 }

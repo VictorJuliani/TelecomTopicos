@@ -14,17 +14,20 @@ about the software, its performance or its conformity to any specification.
 |<---            this code is formatted to fit into 80 columns             --->|
 |<---            this code is formatted to fit into 80 columns             --->|
 
-*/
+ */
 package telecom;
 
-public class Local extends Connection {
-    Local(Customer a, Customer b, boolean iM) {
-		super(b, a, iM); // [OO-1]
-		//super(a, b, iM);
+public class Local extends Connection
+{
+	Local(Customer a, Customer b, Call c, boolean iM)
+	{
+		super(b, a, c, iM); // [OO-1]
+		// super(a, b, c, iM);
 		String str = new String("");
 		if (iM)
-		  str = "mobile ";
-		System.out.println("[new local " + str + "connection from " + 
-		   a + " to " + b + "]");
-    }
+		{
+			str = "mobile ";
+		}
+		System.out.println("[new local " + str + "connection from " + a + " to " + b + "]");
+	}
 }

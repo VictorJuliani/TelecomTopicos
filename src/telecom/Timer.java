@@ -14,37 +14,39 @@ about the software, its performance or its conformity to any specification.
 |<---            this code is formatted to fit into 80 columns             --->|
 |<---            this code is formatted to fit into 80 columns             --->|
 
-*/
+ */
 package telecom;
-
 
 /**
  * Simple timer machine used to record elapsed time
  */
-public class Timer {
-    public long startTime, stopTime;
-
-    /**
-     * set the start time
-     */
-    public void start() {
-        startTime = System.currentTimeMillis();
-        stopTime = startTime;
-    }
-
-    /**
-     * set the end time
-     */
-    public void stop() {
-        stopTime = System.currentTimeMillis();
-    }
-
-    /**
-     * set how much time passed between last start and stop?
-     */
-    public long getTime() {
-        return stopTime - startTime;
-    }
+public class Timer
+{
+	public long startTime, stopTime;
+	
+	/**
+	 * set the start time
+	 */
+	public void start()
+	{
+		startTime = System.currentTimeMillis();
+		// stopTime = startTime;
+		stopTime = 0;
+	}
+	
+	/**
+	 * set the end time
+	 */
+	public void stop()
+	{
+		stopTime = System.currentTimeMillis();
+	}
+	
+	/**
+	 * set how much time passed between last start and stop?
+	 */
+	public long getTime()
+	{
+		return stopTime - startTime;
+	}
 }
-
-

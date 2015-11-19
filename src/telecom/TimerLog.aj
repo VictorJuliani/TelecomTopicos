@@ -13,12 +13,12 @@ package telecom;
 
 public aspect TimerLog {
 
-    after(Timer t) returning () : target(t) && call(* Timer.start())  {
+    after(Timer t): target(t) && call(* Timer.start())  {
       System.err.println("Timer started: " + t.startTime);
-    }    
+    }
     
-    after(Timer t) throwing () : target(t) && call(* Timer.stop()) { // [OA-1]
-    // after(Timer t) returning () : target(t) && call(* Timer.stop()) {
-      System.err.println("Timer stopped: " + t.stopTime);
+    //after(Timer t) throwing () : target(t) && call(* Timer.stop()) { // [OA-1]
+    	after(Timer t): target(t) && call(* Timer.stop()) {
+    	System.err.println("Timer stopped: " + t.stopTime);
     }
 }

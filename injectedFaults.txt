@@ -1,0 +1,41 @@
+﻿Defeitos convencionais:
+
+
+
+OK - [DC-1] método Connection.isMobile
+   -> alterado o retorno do método
+
+OK - [DC-2] método Connection.drop
+   -> alterado valor de comando de atribuição
+
+
+- [DC-3] método Customer.pickup
+   -> alterado método chamado
+
+- [DC-4] adendo after returning associado ao pointcut endTiming (aspecto Timing)
+ -> alterada expressão matemática do adendo
+
+
+
+Defeitos OO:
+
+
+- [OO-1] construtor da classe Local 
+   -> passagem de parâmetros invertidos para o construtor da superclasse
+
+
+- [OO-2] construtor da classe Call
+   -> subtipo instanciado incorreto
+
+
+
+Defeitos OA:
+
+OK - [OA-1] segundo adendo do tipo after (aspecto TimerLog)
+   -> mudado o tipo de adendo de after returning para after throwing
+
+OK - [OA-2] pointcut associado ao primeiro adendo do tipo after (aspecto Timing)
+   -> aumentado o escopo do pointcut
+
+OK - [OA-3] adendo after returning associado ao pointcut createConnection (aspecto Billing)
+   -> binding de informação de contexto invertido
