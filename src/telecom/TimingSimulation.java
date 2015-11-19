@@ -14,30 +14,27 @@ about the software, its performance or its conformity to any specification.
 |<---            this code is formatted to fit into 80 columns             --->|
 |<---            this code is formatted to fit into 80 columns             --->|
 
- */
+*/
 package telecom;
 
 /**
  * This simulation subclass implements AbstractSimulation.report(..)
+ * 
  */
-public class TimingSimulation extends AbstractSimulation
-{
-	
-	public static void main(String[] args)
-	{
-		System.out.println("\n... Timing simulation 2 ...\n");
-		simulation = new TimingSimulation();
-		simulation.run();
-	}
-	
-	/**
-	 * Print a report of the connection time for customer
-	 */
-	@Override
-	protected void report(Customer c)
-	{
-		Timing t = Timing.aspectOf();
-		System.out.println(c + " spent " + t.getTotalConnectTime(c));
-	}
-	
+public class TimingSimulation extends AbstractSimulation {
+
+    public static void main(String[] args){
+	System.out.println("\n... Timing simulation 2 ...\n");
+	simulation = new TimingSimulation();
+	simulation.run();
+    }
+
+    /**
+     * Print a report of the connection time for customer
+     */
+    protected void report(Customer c){
+        Timing t = Timing.aspectOf();
+        System.out.println(c + " spent " + t.getTotalConnectTime(c));
+    }
+
 }

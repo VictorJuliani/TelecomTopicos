@@ -17,28 +17,28 @@
  */
 package telecom;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Vector;
 
 /**
- * Customers have a unique id (name in this case for didactic purposes but it
- * could be telephone number) and area code. They also have protocol for
- * managing calls: call, pickup, etc.
+ * Customers have a unique id (name in this case for didactic purposes
+ * but it could be telephone number) and area code.
+ * They also have protocol for managing calls: call, pickup, etc.
  */
 public class Customer
 {
+	
 	private final String name;
 	private String phoneNumber;
 	private final int areacode;
 	private String password;
-	private final List<Call> calls = new ArrayList<>();
+	private final Vector calls = new Vector();
 	
 	/**
 	 * unregister a call
 	 */
 	protected void removeCall(Call c)
 	{
-		calls.remove(c);
+		calls.removeElement(c);
 	}
 	
 	/**
@@ -46,7 +46,7 @@ public class Customer
 	 */
 	protected void addCall(Call c)
 	{
-		calls.add(c);
+		calls.addElement(c);
 	}
 	
 	/**
@@ -104,7 +104,8 @@ public class Customer
 	 */
 	public void pickup(Call call)
 	{
-		call.pickup();
+		call.hangup(); // [DC-3]
+		// call.pickup();
 		addCall(call);
 	}
 	
@@ -118,9 +119,12 @@ public class Customer
 	}
 	
 	/**
-	 * Merge a pair of calls -- conference them PRE: call1.includes(this)
-	 * call2.includes(this) call1.connected() call2.connected() POST: call1
-	 * includes all customers connected by call1@pre and call2@pre
+	 * Merge a pair of calls -- conference them
+	 * PRE: call1.includes(this)
+	 * call2.includes(this)
+	 * call1.connected()
+	 * call2.connected()
+	 * POST: call1 includes all customers connected by call1@pre and call2@pre
 	 */
 	public void merge(Call call1, Call call2)
 	{
@@ -137,8 +141,7 @@ public class Customer
 	}
 	
 	/**
-	 * @param phoneNumber
-	 *            The phoneNumber to set.
+	 * @param phoneNumber The phoneNumber to set.
 	 */
 	public void setPhoneNumber(String phoneNumber)
 	{
@@ -154,8 +157,7 @@ public class Customer
 	}
 	
 	/**
-	 * @param password
-	 *            The password to set.
+	 * @param password The password to set.
 	 */
 	public void setPassword(String password)
 	{
