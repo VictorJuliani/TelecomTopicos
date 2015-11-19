@@ -24,7 +24,7 @@ Defeitos OO:
    -> passagem de parâmetros invertidos para o construtor da superclasse
 
 
-- [OO-2] construtor da classe Call
+OK - [OO-2] construtor da classe Call
    -> subtipo instanciado incorreto
 
 

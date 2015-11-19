@@ -14,4 +14,4 @@ Este teste descobriu o defeito DC-1 no comando assertEquals(wait * 5, call3.getC
 
 Teste funcional 11
 
-Este teste descobriu o defeito OA-1
+Este teste descobriu o defeito OA-1 no comando if (!output[1].startsWith("Timer stopped"))
