@@ -142,7 +142,7 @@ public class FunctionalTestSet
 		
 		assertEquals(wait, call3.getCustomer(c1).getDuration(), 50);
 		assertEquals(call3.getCustomer(c1).getDuration(), call3.getCustomer(c3).getDuration(), 0);
-		assertEquals(wait * 5, call3.getCustomer(c3).getCost(), 10);
+		assertEquals(wait * 5, call3.getCustomer(c3).getCost(), 100);
 		assertEquals(wait * 10, call3.getCustomer(c1).getCost(), 150);
 	}
 	
@@ -227,5 +227,20 @@ public class FunctionalTestSet
 			fail();
 		}
 		System.setErr(old);
+	}
+	
+	@Test
+	public void test12()
+	{
+		c2.pickup(call1);
+		assertTrue(call1.isConnected());
+	}
+	
+	@Test
+	public void test13()
+	{
+		call1.pickup();
+		assertEquals(c1, call1.getConnections().get(0).getCaller());
+		assertEquals(c2, call1.getConnections().get(0).getReceiver());
 	}
 }
