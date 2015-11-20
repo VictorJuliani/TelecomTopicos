@@ -9,10 +9,10 @@ OK - [DC-2] método Connection.drop
    -> alterado valor de comando de atribuição
 
 
-- [DC-3] método Customer.pickup
+OK - [DC-3] método Customer.pickup
    -> alterado método chamado
 
-- [DC-4] adendo after returning associado ao pointcut endTiming (aspecto Timing)
+Não se aplica - [DC-4] adendo after returning associado ao pointcut endTiming (aspecto Timing)
  -> alterada expressão matemática do adendo
 
 
