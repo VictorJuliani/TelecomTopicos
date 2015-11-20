@@ -20,7 +20,7 @@ Não se aplica - [DC-4] adendo after returning associado ao pointcut endTiming (
 Defeitos OO:
 
 
-- [OO-1] construtor da classe Local 
+OK - [OO-1] construtor da classe Local 
    -> passagem de parâmetros invertidos para o construtor da superclasse
 
 
