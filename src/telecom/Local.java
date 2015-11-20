@@ -21,8 +21,8 @@ public class Local extends Connection
 {
 	Local(Customer a, Customer b, Call c, boolean iM)
 	{
-		super(b, a, c, iM); // [OO-1]
-		// super(a, b, c, iM);
+		//super(b, a, c, iM); // [OO-1]
+		super(a, b, c, iM);
 		String str = new String("");
 		if (iM)
 		{
