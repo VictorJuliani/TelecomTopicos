@@ -1,4 +1,4 @@
-Cada defeito encontrado, estou corrigindo para o original e mantendo o defeito comentado e assim posso ver se o mesmo CT descobre outros erros porque ele para a execução ao achar o primeiro erro.
+Cada defeito encontrado, estou corrigindo para o original e mantendo o defeito comentado e assim posso ver se o mesmo CT descobre outros erros porque ele para a execuÃ§Ã£o ao achar o primeiro erro.
 
 Teste funcional 6: Verificar resultados apos hangup para ligacao local
 
@@ -8,10 +8,18 @@ Defeito OA-2 no comando assertEquals(wait, call1.getCustomer(c1).getDuration(), 
 Defeito OA-3 no comando assertEquals(0, call1.getCustomer(c2).getCost(), 0);
 Defeito OO-2 no comando assertEquals(wait * 3, call1.getCustomer(c1).getCost(), 150);
 
-Teste funcional 8: Verificar resultados apos hangup para ligacao mobile longa distancia
+Testes funcionais 8 e 10: Verificar resultados apos hangup para ligacao mobile longa distancia
 
-Este teste descobriu o defeito DC-1 no comando assertEquals(wait * 5, call3.getCustomer(c3).getCost(), 10);
+Este teste descobriu o defeito DC-1 no comando assertEquals(wait * 5, call3.getCustomer(c3).getCost(), 100);
 
 Teste funcional 11
 
 Este teste descobriu o defeito OA-1 no comando if (!output[1].startsWith("Timer stopped"))
+
+Teste funcional 12
+
+Este teste descobriu o defeito DC-3 no comando assertTrue(call1.isConnected());
+
+Teste funcional 13
+
+Este teste descobriu o defeito OO-1 no comando assertEquals(c1, call1.getConnections().get(0).getCaller());
