@@ -104,8 +104,8 @@ public class Customer
 	 */
 	public void pickup(Call call)
 	{
-		call.hangup(); // [DC-3]
-		// call.pickup();
+		//call.hangup(); // [DC-3]
+		call.pickup();
 		addCall(call);
 	}
 	
