@@ -78,14 +78,14 @@ public class FunctionalTestSet
 		assertFalse(call3.includes(c2));
 	}
 	
-	/* Teste funcional 4: testando se uma excessao e lancada quando caller eh null */
+	/* Teste funcional 4: testando se uma excecao e lancada quando caller eh null */
 	@Test(expected = Exception.class)
 	public void test04() throws NullPointerException
 	{
 		new Call(null, c2, false);
 	}
 	
-	/* Teste funcional 5: testando se uma excessao e lancada quando receiver eh null */
+	/* Teste funcional 5: testando se uma excecao e lancada quando receiver eh null */
 	@Test(expected = Exception.class)
 	public void test05() throws NullPointerException
 	{
